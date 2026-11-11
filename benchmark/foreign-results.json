@@ -1,0 +1,47 @@
+{
+  "cases": [
+    {
+      "id": "F1",
+      "label": "plain prose markdown handoff (no machine-readable block)",
+      "outcome": "clean-error",
+      "exit": 2,
+      "passed": true,
+      "detail": "ERROR: /tmp/hr-foreign-2bsmu8r1/repo/.handoff/HANDOFF.md: no JSON object and no ```json fenced block found"
+    },
+    {
+      "id": "F2",
+      "label": "YAML-frontmatter handoff (Session-Glue style)",
+      "outcome": "clean-error",
+      "exit": 2,
+      "passed": true,
+      "detail": "ERROR: /tmp/hr-foreign-s72am3aj/repo/.handoff/HANDOFF.md: no JSON object and no ```json fenced block found"
+    },
+    {
+      "id": "F3",
+      "label": "json block with foreign extra top-level fields",
+      "outcome": "clean-error",
+      "exit": 2,
+      "passed": true,
+      "detail": "ERROR: unknown top-level fields: ['context', 'summary']"
+    },
+    {
+      "id": "F4",
+      "label": "codex markdown draft, alias keys (text/file)",
+      "outcome": "full-match",
+      "exit": 0,
+      "passed": true,
+      "detail": "# Handoff drift report\nGoal: Ship the auth refactor\nFrozen: 2026-11-11T07:33:54+00:00 by codex on branch main @ bcc7ea938788\n\n[MATCH] HEAD unchanged -- bcc7ea938788\n[MATCH] branch 'main' -- unchanged\n[MATCH] file app.py -- present, content unchanged since freeze (content hash matches)\n[MATCH] next-a"
+    },
+    {
+      "id": "F5",
+      "label": "cursor bare-JSON draft",
+      "outcome": "full-match",
+      "exit": 0,
+      "passed": true,
+      "detail": "# Handoff drift report\nGoal: Ship the auth refactor\nFrozen: 2026-11-11T07:33:55+00:00 by cursor on branch main @ a5ea01b99677\n\n[MATCH] HEAD unchanged -- a5ea01b99677\n[MATCH] branch 'main' -- unchanged\n[MATCH] file app.py -- present, content unchanged since freeze (content hash matches)\n[NOT-RUN] ver"
+    }
+  ],
+  "all_passed": true,
+  "clean_errors": 3,
+  "full_matches": 2
+}

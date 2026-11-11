@@ -1,0 +1,42 @@
+{
+  "runs": [
+    {
+      "run": "skillscan-pristine",
+      "tree": "skillscan",
+      "claims_checked": 6,
+      "false_alarms": 0,
+      "missed_drifts": 0,
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "run": "living-contract-diff-pristine",
+      "tree": "living-contract-diff",
+      "claims_checked": 6,
+      "false_alarms": 0,
+      "missed_drifts": 0,
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "run": "ci-command-truth-pristine",
+      "tree": "ci-command-truth",
+      "claims_checked": 6,
+      "false_alarms": 0,
+      "missed_drifts": 0,
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "run": "skillscan-interleaved",
+      "tree": "skillscan",
+      "claims_checked": 6,
+      "false_alarms": 0,
+      "missed_drifts": 0,
+      "passed": true,
+      "exit": 2
+    }
+  ],
+  "total_claims_checked": 24,
+  "all_passed": true
+}

@@ -1,0 +1,357 @@
+{
+  "total_scenarios": 32,
+  "accurate_total": 12,
+  "accurate_passed": 12,
+  "false_alarm_rate": 0.0,
+  "drift_total": 20,
+  "drift_caught": 20,
+  "drift_catch_rate": 1.0,
+  "per_kind": {
+    "accurate": {
+      "total": 12,
+      "passed": 12
+    },
+    "commit-state": {
+      "total": 6,
+      "passed": 6
+    },
+    "false-claim": {
+      "total": 2,
+      "passed": 2
+    },
+    "file-content": {
+      "total": 7,
+      "passed": 7
+    },
+    "next-action": {
+      "total": 3,
+      "passed": 3
+    },
+    "verify": {
+      "total": 2,
+      "passed": 2
+    }
+  },
+  "results": [
+    {
+      "id": "A01",
+      "kind": "accurate",
+      "label": "pristine resume, single claimed file",
+      "expected": "MATCH",
+      "expected_exit": 0,
+      "got": "MATCH",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "id": "A02",
+      "kind": "accurate",
+      "label": "pristine resume, two claimed files",
+      "expected": "MATCH",
+      "expected_exit": 0,
+      "got": "MATCH",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "id": "A03",
+      "kind": "accurate",
+      "label": "only the handoff itself was committed after freeze",
+      "expected": "MATCH",
+      "expected_exit": 0,
+      "got": "MATCH",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "id": "A04",
+      "kind": "accurate",
+      "label": "file dirty at freeze, identically dirty at resume",
+      "expected": "MATCH",
+      "expected_exit": 0,
+      "got": "MATCH",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "id": "A05",
+      "kind": "accurate",
+      "label": "verify command passes (run with --run-verify)",
+      "expected": "MATCH",
+      "expected_exit": 0,
+      "got": "MATCH",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "id": "A06",
+      "kind": "accurate",
+      "label": "verify would fail but is NOT run by default",
+      "expected": "MATCH",
+      "expected_exit": 0,
+      "got": "MATCH",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "id": "A07",
+      "kind": "accurate",
+      "label": "claimed file in a subdirectory, unchanged",
+      "expected": "MATCH",
+      "expected_exit": 0,
+      "got": "MATCH",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "id": "A08",
+      "kind": "accurate",
+      "label": "frozen and resumed on the same feature branch",
+      "expected": "MATCH",
+      "expected_exit": 0,
+      "got": "MATCH",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "id": "A09",
+      "kind": "accurate",
+      "label": "no files claimed, decided/on_hold tasks only",
+      "expected": "MATCH",
+      "expected_exit": 0,
+      "got": "MATCH",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "id": "A10",
+      "kind": "accurate",
+      "label": "claimed file with a space in its name, unchanged",
+      "expected": "MATCH",
+      "expected_exit": 0,
+      "got": "MATCH",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "id": "A11",
+      "kind": "accurate",
+      "label": "pristine resume, default draft (repeat determinism check)",
+      "expected": "MATCH",
+      "expected_exit": 0,
+      "got": "MATCH",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "id": "A12",
+      "kind": "accurate",
+      "label": "handoff-commit-only, two claimed files",
+      "expected": "MATCH",
+      "expected_exit": 0,
+      "got": "MATCH",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "id": "D01",
+      "kind": "file-content",
+      "label": "claimed file edited, uncommitted",
+      "expected": "DRIFT",
+      "expected_exit": 1,
+      "got": "DRIFT",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "id": "D02",
+      "kind": "file-content",
+      "label": "claimed file edited by a later commit",
+      "expected": "DRIFT",
+      "expected_exit": 1,
+      "got": "DRIFT",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "id": "D03",
+      "kind": "file-content",
+      "label": "claimed file deleted",
+      "expected": "BROKEN",
+      "expected_exit": 2,
+      "got": "BROKEN",
+      "exit": 2,
+      "passed": true
+    },
+    {
+      "id": "D04",
+      "kind": "file-content",
+      "label": "claimed file renamed (committed)",
+      "expected": "DRIFT",
+      "expected_exit": 1,
+      "got": "DRIFT",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "id": "D05",
+      "kind": "file-content",
+      "label": "claimed file renamed (staged git mv)",
+      "expected": "DRIFT",
+      "expected_exit": 1,
+      "got": "DRIFT",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "id": "D06",
+      "kind": "file-content",
+      "label": "gitignored claimed file silently edited",
+      "expected": "DRIFT",
+      "expected_exit": 1,
+      "got": "DRIFT",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "id": "D07",
+      "kind": "file-content",
+      "label": "assume-unchanged claimed file edited (invisible to git status)",
+      "expected": "DRIFT",
+      "expected_exit": 1,
+      "got": "DRIFT",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "id": "D08",
+      "kind": "false-claim",
+      "label": "claimed file edit that never happened (hash of ghost content)",
+      "expected": "DRIFT",
+      "expected_exit": 1,
+      "got": "DRIFT",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "id": "D09",
+      "kind": "false-claim",
+      "label": "one of two claimed files carries a false hash",
+      "expected": "DRIFT",
+      "expected_exit": 1,
+      "got": "DRIFT",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "id": "D10",
+      "kind": "commit-state",
+      "label": "HEAD advanced by 2 unrelated commits",
+      "expected": "DRIFT",
+      "expected_exit": 1,
+      "got": "DRIFT",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "id": "D11",
+      "kind": "commit-state",
+      "label": "HEAD moved backward (rollback)",
+      "expected": "DRIFT",
+      "expected_exit": 1,
+      "got": "DRIFT",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "id": "D12",
+      "kind": "commit-state",
+      "label": "history rewritten (amended freeze commit)",
+      "expected": "BROKEN",
+      "expected_exit": 2,
+      "got": "BROKEN",
+      "exit": 2,
+      "passed": true
+    },
+    {
+      "id": "D13",
+      "kind": "commit-state",
+      "label": "claimed frozen commit does not exist",
+      "expected": "ERROR",
+      "expected_exit": 2,
+      "got": "ERROR",
+      "exit": 2,
+      "passed": true
+    },
+    {
+      "id": "D14",
+      "kind": "commit-state",
+      "label": "branch switched after freeze",
+      "expected": "DRIFT",
+      "expected_exit": 1,
+      "got": "DRIFT",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "id": "D15",
+      "kind": "commit-state",
+      "label": "branch switched AND HEAD advanced",
+      "expected": "DRIFT",
+      "expected_exit": 1,
+      "got": "DRIFT",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "id": "D16",
+      "kind": "verify",
+      "label": "verify command fails at resume (claimed pass is false)",
+      "expected": "BROKEN",
+      "expected_exit": 2,
+      "got": "BROKEN",
+      "exit": 2,
+      "passed": true
+    },
+    {
+      "id": "D17",
+      "kind": "verify",
+      "label": "non-claimed file broken after freeze, verify catches it",
+      "expected": "BROKEN",
+      "expected_exit": 2,
+      "got": "BROKEN",
+      "exit": 2,
+      "passed": true
+    },
+    {
+      "id": "D18",
+      "kind": "next-action",
+      "label": "next-action target deleted",
+      "expected": "BROKEN",
+      "expected_exit": 2,
+      "got": "BROKEN",
+      "exit": 2,
+      "passed": true
+    },
+    {
+      "id": "D19",
+      "kind": "next-action",
+      "label": "next-action target renamed (committed)",
+      "expected": "DRIFT",
+      "expected_exit": 1,
+      "got": "DRIFT",
+      "exit": 1,
+      "passed": true
+    },
+    {
+      "id": "D20",
+      "kind": "next-action",
+      "label": "next-action target in a subdirectory deleted",
+      "expected": "BROKEN",
+      "expected_exit": 2,
+      "got": "BROKEN",
+      "exit": 2,
+      "passed": true
+    }
+  ]
+}
