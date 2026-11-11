@@ -1,0 +1,30 @@
+name: example-resume-check
+on: [pull_request, workflow_dispatch]
+jobs:
+  resume-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # resume-check needs history since the freeze commit
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # In a real repo, replace this checkout step with:
+      #   - uses: <owner>/handoff-reconciler@v0.1
+      # after cloning this tool alongside your project, e.g.:
+      - name: Get handoff-reconciler
+        run: git clone --depth 1 https://github.com/REPLACE-ME/handoff-reconciler.git /tmp/hr
+      - name: Resume check (check-only)
+        run: |
+          set +e
+          # pipefail + PIPESTATUS: without them the pipeline's exit code is
+          # tee's (always 0) and the checker's real code is silently lost.
+          set -o pipefail
+          PYTHONPATH=/tmp/hr python3 -m handoff_reconciler resume-check | tee drift-report.txt
+          code=${PIPESTATUS[0]}
+          { echo "## Handoff drift report (exit $code: 0=match, 1=drift, 2=broken)"; echo '```'; cat drift-report.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          # Informational by design: this job NEVER fails on drift. The code
+          # above is preserved in the summary; gating is a deliberate opt-in
+          # a team adds itself (e.g. `exit $code` here).
+          exit 0
