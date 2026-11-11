@@ -1,0 +1,22 @@
+name: "Handoff Reconciler — resume check"
+description: "Reconcile a frozen .handoff/HANDOFF.md against current git ground truth and write the drift report to the job summary. Check-only: never runs the handoff's verify command."
+runs:
+  using: "composite"
+  steps:
+    - name: Run resume-check (check-only, no --run-verify)
+      shell: bash
+      run: |
+        set +e
+        PYTHONPATH="${{ github.action_path }}" python3 -m handoff_reconciler resume-check > drift-report.txt 2>&1
+        code=$?
+        {
+          echo "## Handoff drift report (exit $code: 0=match, 1=drift, 2=broken)"
+          echo '```'
+          cat drift-report.txt
+          echo '```'
+        } >> "$GITHUB_STEP_SUMMARY"
+        # Informational by design: this action NEVER fails the workflow on
+        # drift (it always exits 0). The checker's real exit code is preserved
+        # in the step summary above. Gating on drift is a deliberate opt-in a
+        # team adds itself.
+        exit 0
