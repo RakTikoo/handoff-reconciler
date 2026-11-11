@@ -1,0 +1,29 @@
+About to run verify command from handoff: "/usr/bin/python3" -m py_compile lcdiff/cli.py
+(This command came from the handoff file; running it only because --run-verify was given.)
+# Handoff drift report
+Goal: Observed-contract diffing for recorded HAR traffic
+Frozen: 2026-11-11T07:33:33+00:00 by claude-code on branch main @ 627b3ea8785a
+
+[MATCH] HEAD moved (handoff commit only) -- 1 commit(s) since freeze touch only .handoff/ (627b3ea8785a -> b963e090be95); informational: this is the handoff's own commit
+[MATCH] branch 'main' -- unchanged
+[MATCH] file lcdiff/cli.py -- present, content unchanged since freeze (content hash matches)
+[MATCH] file lcdiff/diff.py -- present, content unchanged since freeze (content hash matches)
+[MATCH] next-action target examples/real_world/server.py -- still exists (task: Extend the real-world example server)
+[MATCH] verify command -- exit 0: "/usr/bin/python3" -m py_compile lcdiff/cli.py
+
+OVERALL: MATCH
+
+## Corrected resume pack
+Still true:
+- HEAD moved (handoff commit only)
+- branch 'main'
+- file lcdiff/cli.py
+- file lcdiff/diff.py
+- next-action target examples/real_world/server.py
+- verify command
+Drifted (usable with care):
+- (none)
+Broken (do not trust the claim):
+- (none)
+Next actions that survive:
+- Extend the real-world example server

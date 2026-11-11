@@ -1,0 +1,29 @@
+About to run verify command from handoff: "/usr/bin/python3" -m py_compile ci_command_truth.py
+(This command came from the handoff file; running it only because --run-verify was given.)
+# Handoff drift report
+Goal: Prove every run: command in GitHub workflows actually exists
+Frozen: 2026-11-11T07:33:33+00:00 by claude-code on branch main @ ba5012524e63
+
+[MATCH] HEAD moved (handoff commit only) -- 1 commit(s) since freeze touch only .handoff/ (ba5012524e63 -> cea92309881e); informational: this is the handoff's own commit
+[MATCH] branch 'main' -- unchanged
+[MATCH] file ci_command_truth.py -- present, content unchanged since freeze (content hash matches)
+[MATCH] file README.md -- present, content unchanged since freeze (content hash matches)
+[MATCH] next-action target examples/example-workflow.yml -- still exists (task: Add another example workflow)
+[MATCH] verify command -- exit 0: "/usr/bin/python3" -m py_compile ci_command_truth.py
+
+OVERALL: MATCH
+
+## Corrected resume pack
+Still true:
+- HEAD moved (handoff commit only)
+- branch 'main'
+- file ci_command_truth.py
+- file README.md
+- next-action target examples/example-workflow.yml
+- verify command
+Drifted (usable with care):
+- (none)
+Broken (do not trust the claim):
+- (none)
+Next actions that survive:
+- Add another example workflow
