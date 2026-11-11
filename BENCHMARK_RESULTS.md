@@ -20,6 +20,7 @@ python3 run_tests.py                 # 51 unit + regression tests
 | False alarms on accurate handoffs | **0 / 12 (0.0%)** |
 | Dogfood on real project trees | **4 / 4 runs, 24 / 24 claims correct, 0 false alarms** |
 | Foreign handoffs | **3 clean loud errors, 2 full cross-agent matches, 0 silent misreads** |
+| Live GitHub Actions stranger run | **MATCH job exit 0, DRIFT job exit 1, run Success** (section 4) |
 | Unit + adversarial regression tests | **51 / 51** |
 
 ## 1. Planted-drift corpus (`benchmark/run_benchmark.py`, `benchmark/results.json`)
@@ -71,6 +72,17 @@ part of this repo, so this script does not run in CI. Full outputs are in
   (`realworld/`, documented in `ANALYSIS.md`) also scored 6 / 6; this
   dogfood round repeats that pattern on the current tree and adds two
   more real projects.
+- **In-tree rerun (not counted in the script totals above):** the
+  genuine handoff already frozen in `realworld/skillscan-copy/.handoff/`
+  was re-checked on a copy on 2026-11-10 (output:
+  `benchmark/dogfood-outputs/realworld-intree-rerun.txt`). All 6
+  verdicts reproduced exactly and were hand-verified against that
+  copy's own `git log` / `git status`: HEAD DRIFT (2 real commits),
+  `skillscan.py` DRIFT (dirty), `README.md` DRIFT (committed change),
+  next-action target BROKEN (deleted), branch MATCH, verify MATCH.
+  Note: that handoff was frozen by the pre-fix tool and carries no
+  content hashes, so the checker used its legacy git-state fallback —
+  and still scored 6 / 6.
 
 ## 3. Foreign handoffs (`benchmark/run_foreign.py`, `benchmark/foreign-results.json`)
 
@@ -93,13 +105,37 @@ trusted and never silently misread. **0 silent misreads in 5 cases.**
 
 ## 4. Live GitHub Actions (stranger run)
 
-The published Action is exercised the way a stranger would use it — a
-separate consumer repo whose workflow references the published Action by
-tag (`uses: RakTikoo/handoff-reconciler@v0.1`), not a vendored copy.
-This section is completed with the live run's identifier and verdict
-immediately after the v0.1 tag exists (the run depends on the tag);
-until then, the Action is covered locally by the 51-test suite and the
-corpora above, and has **not** yet run in live GitHub Actions.
+**Done — the Action has now run in live GitHub Actions, used the way a
+stranger would use it.** Consumer repo:
+[RakTikoo/handoff-reconciler-dogfood](https://github.com/RakTikoo/handoff-reconciler-dogfood)
+(no vendored copy of the tool). Its workflow checks out the consumer
+repo, checks out the tool at `v0.1` only to run `freeze` **at runtime**
+against the runner's real HEAD (no locally frozen handoff is uploaded —
+web-upload commits would invalidate the frozen HEAD), and then invokes
+the published Action **by reference**:
+`uses: RakTikoo/handoff-reconciler@v0.1`.
+
+Live result — workflow `stranger-resume-check`, run 1,
+2026-11-10 (PT) / 2026-11-11 (UTC), on consumer head `3c8b1f9`:
+[run 42982101191](https://github.com/RakTikoo/handoff-reconciler-dogfood/actions/runs/42982101191),
+conclusion **Success**, both jobs green. Job summaries, transcribed
+verbatim from the run page:
+
+- **Job `match`** — summary header `exit 0`; report lines include
+  `[MATCH] HEAD unchanged`, `[MATCH] branch 'main'`,
+  `[MATCH] file app.py -- present, content unchanged since freeze
+  (content hash matches)`, `[MATCH] next-action target util.py`, and
+  **`OVERALL: MATCH`**.
+- **Job `drift`** (a line appended to the claimed `app.py` after the
+  runtime freeze) — summary header `exit 1`; report lines include
+  `[DRIFT] file app.py -- content differs from freeze; working tree is
+  dirty in a file claimed finished`, with all other claims MATCH, and
+  **`OVERALL: DRIFT`**.
+
+The Action behaved exactly as designed in a stranger's repo: the
+checker's real exit code (0 / 1) is preserved in each summary header,
+the drift report is the same text the CLI prints locally, and the jobs
+themselves succeed because the Action is informational by design.
 
 ## What this does not prove
 
