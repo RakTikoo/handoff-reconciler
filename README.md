@@ -1,7 +1,5 @@
 # Handoff Reconciler
 
-[![Tests](https://github.com/RakTikoo/handoff-reconciler/actions/workflows/tests.yml/badge.svg)](https://github.com/RakTikoo/handoff-reconciler/actions/workflows/tests.yml)
-
 **One-sentence job:** freeze a structured, machine-checkable handoff at the end of an AI coding session, then — at the start of the next session — verify every claim in it against git/test ground truth and print a traffic-light drift report instead of trusting the summary.
 
 ![Handoff Reconciler terminal demo](handoff-reconciler.gif)
@@ -40,7 +38,7 @@ Agents write confident handoff prose: "auth refactor done, tests pass, next: wir
 ## MVP scope (v0)
 
 - `freeze` — strict schema validation of an agent-written draft (JSON, or markdown containing exactly one ```` ```json ```` block); the **tool itself** fills the git snapshot (branch, HEAD, dirty-file list, and a **sha256 content hash for every claimed file**) and `frozen_at` if absent; writes `.handoff/HANDOFF.md` atomically, preserving any previous handoff as `.handoff/HANDOFF.prev.md`. Freezing outside a git repo fails loudly and writes nothing. A claimed file that does not exist (or is a directory) at freeze time is a freeze **error** — freeze records content hashes, and a claim about a missing path can never be reconciled honestly.
-- `resume-check` — **read-only**. Reconciles: HEAD moved (ancestry-aware: N commits forward, explicit *moved backward*/rollback, or *history rewritten* when neither commit is an ancestor of the other; commits touching **only `.handoff/`** — the handoff's own commit — count as MATCH with an informational note), branch changed, claimed-finished files whose **content hash differs from freeze** (this catches dirty, committed, gitignored, and `assume-unchanged` edits uniformly), claimed files deleted or **renamed** (reported as DRIFT "renamed to …"), next-action target files that no longer exist (or were renamed), and the verify command's status.
+- `resume-check` — **read-only**. Reconciles: HEAD moved (ancestry-aware: N commits forward, explicit *moved backward*/rollback, or *history rewritten* when neither commit is an ancestor of the other; commits touching **only `.handoff/`** — the handoff's own commit — count as MATCH with an informational note), branch changed, claimed-finished files whose **content hash differs from freeze** (this catches dirty, committed, gitignored, and `assume-unchanged` edits uniformly), claimed files deleted or **renamed** (reported as DRIFT "renamed to …"), next-action target files that no longer exist (or were renamed), next-action targets whose **content hash differs from freeze** (freeze records a sha256 for every next-action target that exists as a file, so an in-place edit reads as DRIFT; a target that did not exist at freeze time has no baseline and keeps the existence-only check, as do handoffs frozen before target hashes existed), and the verify command's status.
 - `show` — one-screen summary of the frozen handoff.
 - Fixture corpus of scripted session stories in real temp git repos (see `tests/` and `ANALYSIS.md`).
 
@@ -70,7 +68,8 @@ Agents write confident handoff prose: "auth refactor done, tests pass, next: wir
   "verify_command": "python3 -m pytest -q",
   "frozen_at": "2026-11-10T21:07:54+00:00",
   "git": {"branch": "main", "head": "<filled by freeze>", "dirty_files": [],
-          "file_hashes": {"app.py": "<sha256 of app.py at freeze, filled by freeze>"}}
+          "file_hashes": {"app.py": "<sha256 of app.py at freeze, filled by freeze>"},
+          "target_hashes": {"util.py": "<sha256 of the next-action target at freeze, filled by freeze>"}}
 }
 ```
 
@@ -127,7 +126,7 @@ A handoff file in a repo you cloned could have been written by anyone. Its `veri
 - `resume-check` **never runs it by default** — it reports `NOT-RUN`.
 - Only with the explicit `--run-verify` flag does the tool run it: the command is **printed before it runs**, executed in the repo root with a timeout (default 120s, `--verify-timeout N`, must be 1..3600 or it's a usage error), in its own process group (a timeout kills the whole group, not just the shell), with bounded output capture (only the last 64KB per stream is ever held). Its exit code becomes exactly one claim result (MATCH / BROKEN); on failure the report includes a bounded tail (last 20 lines / 4KB) of its output. A whitespace-only `verify_command` counts as no command.
 - Every other handoff field (`goal`, task titles, paths, …) is data only. The tool invokes git through argv lists, never a shell, so shell metacharacters in those fields cannot execute (covered by a dedicated fixture test).
-- The git snapshot inside a handoff is **strictly validated at load time**: `git.head` must be a full commit hash (`^[0-9a-f]{40,64}$`), `git.branch` a string, `git.dirty_files` a list of strings, `git.file_hashes` a path→sha256 map exactly matching `files_claimed`, and unknown fields inside `git` are rejected — any violation is a clean `ERROR` with exit 2. This matters because snapshot values are passed to git as arguments: a crafted `head` like `--output=/tmp/x` would otherwise become a git *option* and could write files during a supposedly read-only check. (Regression-tested.)
+- The git snapshot inside a handoff is **strictly validated at load time**: `git.head` must be a full commit hash (`^[0-9a-f]{40,64}$`), `git.branch` a string, `git.dirty_files` a list of strings, `git.file_hashes` a path→sha256 map exactly matching `files_claimed`, `git.target_hashes` (when present) a path→sha256 map whose keys are all next-action target files, and unknown fields inside `git` are rejected — any violation is a clean `ERROR` with exit 2. This matters because snapshot values are passed to git as arguments: a crafted `head` like `--output=/tmp/x` would otherwise become a git *option* and could write files during a supposedly read-only check. (Regression-tested.)
 - Freeze refuses to write through a symlink: if `.handoff`, `HANDOFF.md`, or `HANDOFF.prev.md` is a symlink or resolves outside the repo root, freeze fails with exit 2.
 - Path safety: `files_claimed` and task `target_file` values must be relative paths with no `..` component; anything else is rejected at freeze *and* at resume-check load time. `./x` is normalised to `x`; `.` itself is rejected (it is a directory, not a file).
 - `resume-check` is read-only by construction: it performs no writes anywhere, including outside `.handoff/`.
@@ -143,7 +142,7 @@ Check-only drift report in CI (never `--run-verify`), written to the job summary
 ```yaml
 - uses: actions/checkout@v4
   with: { fetch-depth: 0 }
-- uses: RakTikoo/handoff-reconciler@v0.1
+- uses: <owner>/handoff-reconciler@v0.1
 ```
 
 **The job never fails.** The action is informational by design: it always exits 0, drift is reported in the job summary (with the checker's real exit code preserved there), and nothing is blocked. Gating a workflow on drift is a deliberate opt-in a team adds itself. The example workflow preserves the code through its `tee` pipeline with `pipefail` + `PIPESTATUS`, so the summary shows the true code rather than `tee`'s.

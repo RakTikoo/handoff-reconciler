@@ -219,6 +219,54 @@ class Story(unittest.TestCase):
         after = git(self.repo, "status", "--porcelain")
         self.assertEqual(before, after)
 
+    # (13) next-action target edited in place -> DRIFT (issue #1)
+    def test_13_next_target_edited_in_place_drifts(self):
+        self.freeze()
+        (self.repo / "util.py").write_text("X = 2\n")
+        r = run_cli(self.repo, "resume-check", expect=1)
+        self.assertIn("[DRIFT] next-action target util.py", r.stdout)
+        self.assertIn("content differs from freeze", r.stdout)
+
+    # (14) next-action target edited then committed -> still DRIFT
+    def test_14_next_target_edited_and_committed_drifts(self):
+        self.freeze()
+        self.commit_change("util.py", "X = 2\n", "edit the target")
+        r = run_cli(self.repo, "resume-check", expect=1)
+        self.assertIn("[DRIFT] next-action target util.py", r.stdout)
+        self.assertIn("changed by commits after freeze", r.stdout)
+
+    # (15) untouched target with a recorded hash -> MATCH, hash wording
+    def test_15_next_target_unchanged_matches_with_hash(self):
+        self.freeze()
+        r = run_cli(self.repo, "resume-check", expect=0)
+        self.assertIn("[MATCH] next-action target util.py", r.stdout)
+        self.assertIn("content hash matches", r.stdout)
+
+    # (16) legacy handoff without target_hashes -> existence-only MATCH
+    def test_16_legacy_handoff_without_target_hashes(self):
+        self.freeze()
+        p = self.repo / ".handoff" / "HANDOFF.md"
+        text = p.read_text()
+        data = json.loads(text.split("```json", 1)[1].split("```", 1)[0])
+        del data["git"]["target_hashes"]
+        p.write_text(text.split("```json", 1)[0] + "```json\n"
+                     + json.dumps(data, indent=2, sort_keys=True)
+                     + "\n```\n")
+        (self.repo / "util.py").write_text("X = 2\n")
+        r = run_cli(self.repo, "resume-check", expect=0)
+        self.assertIn("[MATCH] next-action target util.py -- still exists",
+                      r.stdout)
+
+    # (17) target created after freeze (no baseline) -> existence-only
+    def test_17_next_target_created_after_freeze(self):
+        self.freeze(tasks=[
+            {"id": "t3", "title": "Create the webhook module",
+             "status": "next", "target_file": "webhook.py"},
+        ], files_claimed=["app.py"])
+        (self.repo / "webhook.py").write_text("X = 1\n")
+        r = run_cli(self.repo, "resume-check", expect=0)
+        self.assertIn("[MATCH] next-action target webhook.py", r.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

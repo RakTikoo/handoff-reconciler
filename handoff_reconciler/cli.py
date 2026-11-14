@@ -62,10 +62,11 @@ def validate_rel_path(value, field):
     return "/".join(filtered)
 
 
-def _validate_git_snapshot(g, files_claimed):
+def _validate_git_snapshot(g, files_claimed, next_targets=()):
     if not isinstance(g, dict):
         raise HandoffError("git: snapshot must be an object")
-    allowed_git = {"branch", "head", "dirty_files", "file_hashes"}
+    allowed_git = {"branch", "head", "dirty_files", "file_hashes",
+                   "target_hashes"}
     unknown = set(g) - allowed_git
     if unknown:
         raise HandoffError(f"git: unknown fields in snapshot: {sorted(unknown)}")
@@ -101,6 +102,28 @@ def _validate_git_snapshot(g, files_claimed):
                 "git.file_hashes: keys must exactly match files_claimed "
                 f"(hashes for {sorted(canon)}, claims {sorted(files_claimed)})")
         out["file_hashes"] = canon
+    if "target_hashes" in g:
+        th = g["target_hashes"]
+        if not isinstance(th, dict):
+            raise HandoffError("git.target_hashes: must be an object mapping path -> sha256 hex")
+        for k, v in th.items():
+            if not isinstance(k, str) or not isinstance(v, str) or not _SHA256_RE.match(v):
+                raise HandoffError(
+                    f"git.target_hashes[{k!r}]: must map a path string to a sha256 hex string")
+        # Keys are canonicalised the same way as target_file values,
+        # and every key must name a next-action target: freeze only
+        # records hashes for targets that existed as files at freeze
+        # time, so the key set is a subset of the next targets (a
+        # target created later has no baseline and is existence-only).
+        canon = {}
+        for k, v in th.items():
+            canon[validate_rel_path(k, "git.target_hashes key")] = v
+        stray = set(canon) - set(next_targets)
+        if stray:
+            raise HandoffError(
+                "git.target_hashes: keys must be next-action target files "
+                f"(stray keys: {sorted(stray)})")
+        out["target_hashes"] = canon
     return out
 
 
@@ -190,7 +213,11 @@ def validate_handoff(data, *, fill_defaults=False):
     out = {"goal": goal, "tasks": tasks, "files_claimed": files,
            "verify_command": verify, "frozen_at": frozen_at, "agent": agent}
     if "git" in data:
-        out["git"] = _validate_git_snapshot(data["git"], files)
+        next_targets = sorted({t["target_file"] for t in tasks
+                               if t["status"] == "next"
+                               and t.get("target_file")})
+        out["git"] = _validate_git_snapshot(data["git"], files,
+                                            next_targets)
     return out
 
 
@@ -477,6 +504,20 @@ def cmd_freeze(args):
         if tp and (root / tp).is_dir():
             raise HandoffError(f"tasks: target_file is a directory at freeze time: {tp!r}")
     h["git"]["file_hashes"] = file_hashes
+    # Next-action targets get the same content baseline as claimed
+    # files (issue #1): an in-place edit to a target must read as
+    # DRIFT, not as fine. Unlike claimed files, a target may
+    # legitimately not exist yet at freeze time (the next action is
+    # often "create this file"), so a missing or non-regular target
+    # simply records no hash and keeps the existence-only check.
+    target_hashes = {}
+    for t in h["tasks"]:
+        tp = t.get("target_file")
+        if t["status"] == "next" and tp:
+            fp = root / tp
+            if fp.is_file():
+                target_hashes[tp] = _file_sha256(fp)
+    h["git"]["target_hashes"] = target_hashes
     target_dir = root / ".handoff"
     target = target_dir / "HANDOFF.md"
     prev = target_dir / "HANDOFF.prev.md"
@@ -649,12 +690,40 @@ def cmd_resume_check(args):
                 results.append((f"file {p}", DRIFT, "content differs from freeze; changed by commits after freeze"))
             else:
                 results.append((f"file {p}", MATCH, "present, clean, unchanged since freeze"))
-    # Next-action targets
+    # Next-action targets: existence/rename as before, plus the
+    # freeze-time content hash when one was recorded (handoffs frozen
+    # before target hashes existed keep the existence-only verdict).
+    target_hashes = snap.get("target_hashes", {})
     for t in h["tasks"]:
         if t["status"] == "next" and t.get("target_file"):
             tp = t["target_file"]
-            if (root / tp).exists():
-                results.append((f"next-action target {tp}", MATCH, f"still exists (task: {t['title']})"))
+            fp = root / tp
+            if fp.exists() and not fp.is_dir():
+                frozen_hash = target_hashes.get(tp)
+                if frozen_hash is None:
+                    results.append((f"next-action target {tp}", MATCH, f"still exists (task: {t['title']})"))
+                else:
+                    try:
+                        cur_hash = _file_sha256(fp)
+                    except OSError as e:
+                        results.append((f"next-action target {tp}", BROKEN,
+                                        f"target could not be read: {e} (task: {t['title']})"))
+                        continue
+                    if cur_hash == frozen_hash:
+                        results.append((f"next-action target {tp}", MATCH,
+                                        f"still exists, content unchanged since freeze "
+                                        f"(content hash matches) (task: {t['title']})"))
+                    else:
+                        reasons = ["content differs from freeze"]
+                        if tp in dirty:
+                            reasons.append("working tree is dirty in the target file")
+                        if tp in changed:
+                            reasons.append("changed by commits after freeze")
+                        results.append((f"next-action target {tp}", DRIFT,
+                                        f"{'; '.join(reasons)} (task: {t['title']})"))
+            elif fp.exists():
+                results.append((f"next-action target {tp}", BROKEN,
+                                f"target is now a directory (task: {t['title']})"))
             else:
                 new = rename_map.get(tp)
                 if new and (root / new).exists():

@@ -88,10 +88,20 @@ the mutations performed.)*
    history (edits are visible there) plus strict format validation of the
    snapshot. Anyone who can rewrite both the handoff and the repo history can
    forge a baseline. Signing is out of v0 scope (see README security section).
-2. Content hashes cover `files_claimed` only. A next-action *target's* contents
-   are not hashed (its existence / rename state is checked), and semantic truth
-   ("the refactor is actually complete") remains out of scope by design — that
-   is what the single verify command is for, and it is opt-in.
+2. ~~Content hashes cover `files_claimed` only. A next-action *target's*
+   contents are not hashed (its existence / rename state is checked)~~ —
+   **fixed (issue #1):** freeze now also records a sha256 content hash for
+   every next-action target that exists as a regular file (`git.target_hashes`,
+   strictly validated at load: keys must be next-action targets), and
+   resume-check reports an in-place edit to a target as DRIFT ("content
+   differs from freeze"), keeping the existing deleted/renamed verdicts.
+   Handoffs frozen before this change have no `target_hashes` and keep the
+   existence-only fallback, like legacy handoffs without `file_hashes`.
+   What remains out of scope: a target that does not exist at freeze time
+   has no content baseline (the next action is often "create this file"),
+   and semantic truth ("the refactor is actually complete") remains out of
+   scope by design — that is what the single verify command is for, and it
+   is opt-in. Tests: `test_13_*` … `test_17_*` in `tests/test_handoff.py`.
 3. **Legacy handoffs without `file_hashes`** (written before the fix pass) load
    with a weaker fallback: per-file verdicts fall back to git dirty/changed
    state only, so git-invisible edits (gitignored, `assume-unchanged`) are not
