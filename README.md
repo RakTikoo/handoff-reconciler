@@ -2,6 +2,8 @@
 
 **One-sentence job:** freeze a structured, machine-checkable handoff at the end of an AI coding session, then — at the start of the next session — verify every claim in it against git/test ground truth and print a traffic-light drift report instead of trusting the summary.
 
+![Handoff Reconciler terminal demo](handoff-reconciler.gif)
+
 Python standard library only. Deterministic. No LLM inside the tool. The handoff schema is agent-neutral plain text (markdown + a JSON header block); v0 is used with Claude Code sessions, but nothing in the format or the checker is Claude-specific.
 
 ## Why
