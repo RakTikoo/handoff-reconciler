@@ -1,5 +1,7 @@
 # Handoff Reconciler
 
+[![Tests](https://github.com/RakTikoo/handoff-reconciler/actions/workflows/tests.yml/badge.svg)](https://github.com/RakTikoo/handoff-reconciler/actions/workflows/tests.yml)
+
 **One-sentence job:** freeze a structured, machine-checkable handoff at the end of an AI coding session, then — at the start of the next session — verify every claim in it against git/test ground truth and print a traffic-light drift report instead of trusting the summary.
 
 ![Handoff Reconciler terminal demo](handoff-reconciler.gif)
@@ -141,7 +143,7 @@ Check-only drift report in CI (never `--run-verify`), written to the job summary
 ```yaml
 - uses: actions/checkout@v4
   with: { fetch-depth: 0 }
-- uses: <owner>/handoff-reconciler@v0.1
+- uses: RakTikoo/handoff-reconciler@v0.1
 ```
 
 **The job never fails.** The action is informational by design: it always exits 0, drift is reported in the job summary (with the checker's real exit code preserved there), and nothing is blocked. Gating a workflow on drift is a deliberate opt-in a team adds itself. The example workflow preserves the code through its `tee` pipeline with `pipefail` + `PIPESTATUS`, so the summary shows the true code rather than `tee`'s.
