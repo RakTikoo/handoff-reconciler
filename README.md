@@ -6,6 +6,31 @@
 
 Python standard library only. Deterministic. No LLM inside the tool. The handoff schema is agent-neutral plain text (markdown + a JSON header block); v0 is used with Claude Code sessions, but nothing in the format or the checker is Claude-specific.
 
+## See it work
+
+A real captured run (from `realworld/` in this repo — a handoff frozen
+during real work on another project, checked at the next session):
+
+```
+# Handoff drift report
+Goal: Extend SkillScan rule coverage after the v0.3 audit round
+
+[DRIFT] HEAD moved -- 2 commit(s) since freeze
+[MATCH] branch 'main' -- unchanged
+[DRIFT] file skillscan.py -- working tree is dirty in a file claimed finished
+[DRIFT] file README.md -- changed by commits after freeze
+[BROKEN] next-action target docs/AUDIT_COVERAGE.md -- target no longer exists
+[MATCH] verify command -- exit 0
+
+OVERALL: BROKEN
+```
+
+The frozen summary claimed a clean stopping point. Two files had moved,
+one next action pointed at a file that no longer existed — and the
+report ends with a corrected resume pack: what is still true, what
+drifted, and which next actions survive. Full output:
+`realworld/resume-check-output.txt`.
+
 ## Why
 
 Agents write confident handoff prose: "auth refactor done, tests pass, next: wire the webhook." By the next session a human may have committed half of it away, another agent may have touched the same files, or the tests may no longer pass. Capture tools are everywhere; *verification* is the missing layer. This tool is that layer: claims are data, git is ground truth, and the output is a drift report plus a corrected resume pack (what is still true, what drifted, which next actions survive).
