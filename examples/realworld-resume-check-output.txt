@@ -1,0 +1,28 @@
+About to run verify command from handoff: python3 -m py_compile skillscan.py
+(This command came from the handoff file; running it only because --run-verify was given.)
+# Handoff drift report
+Goal: Extend SkillScan rule coverage after the v0.3 audit round
+Frozen: 2026-11-10T21:07:54+00:00 by claude-code on branch main @ 7a281ee899d8
+
+[DRIFT] HEAD moved -- 2 commit(s) since freeze (7a281ee899d8 -> 377bbea1c601)
+[MATCH] branch 'main' -- unchanged
+[DRIFT] file skillscan.py -- working tree is dirty in a file claimed finished
+[DRIFT] file README.md -- changed by commits after freeze
+[BROKEN] next-action target docs/AUDIT_COVERAGE.md -- target no longer exists (task: Add next rule batch, starting from docs/AUDIT_COVERAGE.md gaps)
+[MATCH] verify command -- exit 0: python3 -m py_compile skillscan.py
+
+OVERALL: BROKEN
+
+## Corrected resume pack
+Still true:
+- branch 'main'
+- verify command
+Drifted (usable with care):
+- HEAD moved: 2 commit(s) since freeze (7a281ee899d8 -> 377bbea1c601)
+- file skillscan.py: working tree is dirty in a file claimed finished
+- file README.md: changed by commits after freeze
+Broken (do not trust the claim):
+- next-action target docs/AUDIT_COVERAGE.md: target no longer exists (task: Add next rule batch, starting from docs/AUDIT_COVERAGE.md gaps)
+Next actions that survive:
+- (none)
+EXIT=2
