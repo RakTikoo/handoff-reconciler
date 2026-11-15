@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "handoff-reconciler"
+dynamic = ["version"]
+description = "Verify AI coding-session handoffs against git ground truth — freeze a structured handoff, then get a traffic-light drift report at resume."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+keywords = ["ai-agents", "claude-code", "git", "handoff", "session-management", "verification"]
+authors = [{ name = "Rakshit Tikoo" }]
+
+[project.urls]
+Homepage = "https://github.com/RakTikoo/handoff-reconciler"
+Repository = "https://github.com/RakTikoo/handoff-reconciler"
+
+[project.scripts]
+handoff-reconciler = "handoff_reconciler.cli:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "handoff_reconciler.__version__" }
+
+[tool.setuptools]
+packages = ["handoff_reconciler"]
