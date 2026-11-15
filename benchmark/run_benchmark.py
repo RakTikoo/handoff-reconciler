@@ -287,6 +287,15 @@ def s_next_target_subdir_deleted(repo, tmp):
     (repo.dir / "docs" / "PLAN.md").unlink()
 
 
+
+def s_next_target_edited(repo, tmp):
+    repo.freeze(tmp)
+    (repo.dir / "util.py").write_text("X = 2  # edited in place after freeze\n")
+
+
+def s_next_target_unchanged(repo, tmp):
+    repo.freeze(tmp)
+
 SCENARIOS = [
     # --- accurate handoffs: any DRIFT/BROKEN here is a FALSE ALARM ---
     ("A01", "accurate", "pristine resume, single claimed file", s_pristine, False,
@@ -313,6 +322,9 @@ SCENARIOS = [
      "MATCH", 0, ["OVERALL: MATCH"]),
     ("A12", "accurate", "handoff-commit-only, two claimed files", s_multi_claimed, False,
      "MATCH", 0, ["[MATCH] file util.py"]),
+    ("A13", "accurate", "next-action target present and unchanged", s_next_target_unchanged, False,
+     "MATCH", 0, ["[MATCH] next-action target util.py"]),
+
 
     # --- planted drift: file content ---
     ("D01", "file-content", "claimed file edited, uncommitted", s_dirty_edit, False,
@@ -365,6 +377,8 @@ SCENARIOS = [
      "DRIFT", 1, ["[DRIFT] next-action target util.py -- renamed to webhook.py"]),
     ("D20", "next-action", "next-action target in a subdirectory deleted", s_next_target_subdir_deleted, False,
      "BROKEN", 2, ["[BROKEN] next-action target docs/PLAN.md"]),
+    ("D21", "next-action", "next-action target edited in place", s_next_target_edited, False,
+     "DRIFT", 1, ["[DRIFT] next-action target util.py"]),
 ]
 
 # A12 needs the handoff-commit step as well; wrap it.

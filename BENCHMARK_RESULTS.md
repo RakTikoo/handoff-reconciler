@@ -16,8 +16,8 @@ python3 run_tests.py                 # 51 unit + regression tests
 
 | Measure | Result |
 |---|---|
-| Planted-drift catch rate | **20 / 20 (100%)** |
-| False alarms on accurate handoffs | **0 / 12 (0.0%)** |
+| Planted-drift catch rate | **21 / 21 (100%)** |
+| False alarms on accurate handoffs | **0 / 13 (0.0%)** |
 | Dogfood on real project trees | **4 / 4 runs, 24 / 24 claims correct, 0 false alarms** |
 | Foreign handoffs | **3 clean loud errors, 2 full cross-agent matches, 0 silent misreads** |
 | Live GitHub Actions stranger run | **MATCH job exit 0, DRIFT job exit 1, run Success** (section 4) |
@@ -38,8 +38,8 @@ key per-claim line all match the label recorded before the run.
 | false-claim | 2 / 2 | a claimed file edit that never happened (handoff hash describes ghost content, file and git state untouched); one false hash among two claimed files (the true one still reads MATCH) |
 | commit-state | 6 / 6 | HEAD advanced by 2 unrelated commits; HEAD moved backward (rollback); history rewritten (amended freeze commit); a claimed frozen commit that does not exist (clean tool `ERROR`, exit 2, no traceback — counted as caught because the claim is never trusted); branch switch; branch switch + HEAD advance together |
 | verify | 2 / 2 | verify command fails at resume although the handoff claims success; a non-claimed file broken after freeze, caught only by the verify command (claimed file still MATCH) |
-| next-action | 3 / 3 | target deleted; target renamed (committed); target in a subdirectory deleted |
-| **accurate (no drift planted)** | **12 / 12 clean** | pristine resumes (single/multiple/subdirectory/spaced-name claims), handoff-commit-only resumes, dirty-at-freeze file identically dirty at resume, verify passes under `--run-verify`, a failing verify command correctly **not** run by default |
+| next-action | 4 / 4 | target deleted; target renamed (committed); target in a subdirectory deleted; target edited in place |
+| **accurate (no drift planted)** | **13 / 13 clean** | pristine resumes (single/multiple/subdirectory/spaced-name claims), handoff-commit-only resumes, dirty-at-freeze file identically dirty at resume, verify passes under `--run-verify`, a failing verify command correctly **not** run by default, next-action target present and unchanged |
 
 The false-alarm number is the one we weight most, same discipline as a
 benign false-BLOCK count: a checker that cries drift on honest handoffs
