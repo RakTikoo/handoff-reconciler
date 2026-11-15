@@ -8,6 +8,26 @@
 
 Python standard library only. Deterministic. No LLM inside the tool. The handoff schema is agent-neutral plain text (markdown + a JSON header block); v0 is used with Claude Code sessions, but nothing in the format or the checker is Claude-specific.
 
+## Install
+
+```bash
+pip install git+https://github.com/RakTikoo/handoff-reconciler
+# or, isolated, with pipx:
+pipx install git+https://github.com/RakTikoo/handoff-reconciler
+```
+
+That gives you the `handoff-reconciler` command. `python -m handoff_reconciler` does exactly the same thing, and running from a clone works too — no build step, it is pure stdlib Python (3.9+).
+
+In CI, use the GitHub Action instead of installing:
+
+```yaml
+- uses: RakTikoo/handoff-reconciler@v0.2
+```
+
+(see the [GitHub Action](#github-action) section below for what it does).
+
+**CLI-first:** this is a command-line tool. There is no supported library API yet — the package layout is internal and may change between versions, so scripts and harnesses should call the CLI (or the Action), not import `handoff_reconciler.cli`.
+
 ## See it work
 
 A real captured run (from `realworld/` in this repo — a handoff frozen
@@ -157,7 +177,7 @@ See `action.yml` and `.github/workflows/example-resume-check.yml`.
 python run_tests.py        # or: python -m unittest discover -s tests
 ```
 
-51 tests, all passing: the original 14 fixture stories (`tests/test_handoff.py`) plus 37 adversarial-review regression tests (`tests/test_regressions.py`), each mapped to a reviewer finding (see `ANALYSIS.md` for the corpus design, per-fixture expected vs actual verdicts, the hand-labelled real-world run, and the fix-pass section).
+56 tests, all passing: 19 fixture stories (`tests/test_handoff.py`) plus 37 adversarial-review regression tests (`tests/test_regressions.py`), each mapped to a reviewer finding (see `ANALYSIS.md` for the corpus design, per-fixture expected vs actual verdicts, the hand-labelled real-world run, and the fix-pass section).
 
 ## Benchmarks
 
