@@ -8,6 +8,8 @@
 
 Python standard library only. Deterministic. No LLM inside the tool. The handoff schema is agent-neutral plain text (markdown + a JSON header block); v0 is used with Claude Code sessions, but nothing in the format or the checker is Claude-specific.
 
+**First contribution?** Start with a [good first issue](https://github.com/RakTikoo/handoff-reconciler/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+
 ## Install
 
 ```bash
