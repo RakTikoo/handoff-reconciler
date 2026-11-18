@@ -144,6 +144,13 @@ def s_feature_branch(repo, tmp):
     repo.freeze(tmp)
 
 
+def s_detached_head(repo, tmp):
+    # CI runners check out a commit, not a branch: detach HEAD at the same
+    # commit BEFORE freezing, so freeze and resume both see DETACHED.
+    git(repo.dir, "checkout", "-q", "--detach")
+    repo.freeze(tmp)
+
+
 def s_no_claimed_files(repo, tmp):
     repo.freeze(tmp, files_claimed=[],
                 tasks=[{"id": "t1", "title": "Plan the refactor", "status": "decided"},
@@ -313,6 +320,8 @@ SCENARIOS = [
      "MATCH", 0, ["OVERALL: MATCH"]),
     ("A12", "accurate", "handoff-commit-only, two claimed files", s_multi_claimed, False,
      "MATCH", 0, ["[MATCH] file util.py"]),
+    ("A13", "accurate", "frozen and resumed in detached HEAD (CI checkout state)", s_detached_head, False,
+     "MATCH", 0, ["[MATCH] branch 'DETACHED'", "[MATCH] file app.py"]),
 
     # --- planted drift: file content ---
     ("D01", "file-content", "claimed file edited, uncommitted", s_dirty_edit, False,

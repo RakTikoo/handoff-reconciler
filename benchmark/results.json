@@ -1,15 +1,15 @@
 {
-  "total_scenarios": 32,
-  "accurate_total": 12,
-  "accurate_passed": 12,
+  "total_scenarios": 33,
+  "accurate_total": 13,
+  "accurate_passed": 13,
   "false_alarm_rate": 0.0,
   "drift_total": 20,
   "drift_caught": 20,
   "drift_catch_rate": 1.0,
   "per_kind": {
     "accurate": {
-      "total": 12,
-      "passed": 12
+      "total": 13,
+      "passed": 13
     },
     "commit-state": {
       "total": 6,
@@ -147,6 +147,16 @@
       "id": "A12",
       "kind": "accurate",
       "label": "handoff-commit-only, two claimed files",
+      "expected": "MATCH",
+      "expected_exit": 0,
+      "got": "MATCH",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "id": "A13",
+      "kind": "accurate",
+      "label": "frozen and resumed in detached HEAD (CI checkout state)",
       "expected": "MATCH",
       "expected_exit": 0,
       "got": "MATCH",
