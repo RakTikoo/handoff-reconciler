@@ -185,7 +185,7 @@ python run_tests.py        # or: python -m unittest discover -s tests
 
 Measured on the v0.1 tree with the reproducible corpora in `benchmark/` (see `BENCHMARK_RESULTS.md` for the full report — our own rates on our own corpus only):
 
-- **Planted-drift corpus:** 20 / 20 planted drifts caught (file content, false claims, commit/branch state, verify failures, next-action targets), **0 / 12 false alarms** on accurate handoffs.
+- **Planted-drift corpus:** 20 / 20 planted drifts caught (file content, false claims, commit/branch state, verify failures, next-action targets), **0 / 13 false alarms** on accurate handoffs.
 - **Dogfood on real project trees:** 24 / 24 claims correct across three real projects, 0 false alarms.
 - **Foreign handoffs:** formats the tool does not understand fail with a clean, loud `ERROR` (never a silent misread); drafts from other agents written in the documented schema reconcile fully.
 

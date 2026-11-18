@@ -17,7 +17,7 @@ python3 run_tests.py                 # 51 unit + regression tests
 | Measure | Result |
 |---|---|
 | Planted-drift catch rate | **20 / 20 (100%)** |
-| False alarms on accurate handoffs | **0 / 12 (0.0%)** |
+| False alarms on accurate handoffs | **0 / 13 (0.0%)** |
 | Dogfood on real project trees | **4 / 4 runs, 24 / 24 claims correct, 0 false alarms** |
 | Foreign handoffs | **3 clean loud errors, 2 full cross-agent matches, 0 silent misreads** |
 | Live GitHub Actions stranger run | **MATCH job exit 0, DRIFT job exit 1, run Success** (section 4) |
@@ -39,7 +39,7 @@ key per-claim line all match the label recorded before the run.
 | commit-state | 6 / 6 | HEAD advanced by 2 unrelated commits; HEAD moved backward (rollback); history rewritten (amended freeze commit); a claimed frozen commit that does not exist (clean tool `ERROR`, exit 2, no traceback — counted as caught because the claim is never trusted); branch switch; branch switch + HEAD advance together |
 | verify | 2 / 2 | verify command fails at resume although the handoff claims success; a non-claimed file broken after freeze, caught only by the verify command (claimed file still MATCH) |
 | next-action | 3 / 3 | target deleted; target renamed (committed); target in a subdirectory deleted |
-| **accurate (no drift planted)** | **12 / 12 clean** | pristine resumes (single/multiple/subdirectory/spaced-name claims), handoff-commit-only resumes, dirty-at-freeze file identically dirty at resume, verify passes under `--run-verify`, a failing verify command correctly **not** run by default |
+| **accurate (no drift planted)** | **13 / 13 clean** | pristine resumes (single/multiple/subdirectory/spaced-name claims), handoff-commit-only resumes, dirty-at-freeze file identically dirty at resume, verify passes under `--run-verify`, a failing verify command correctly **not** run by default, frozen and resumed in detached HEAD (the state CI checkouts are in) |
 
 The false-alarm number is the one we weight most, same discipline as a
 benign false-BLOCK count: a checker that cries drift on honest handoffs
@@ -141,7 +141,7 @@ themselves succeed because the Action is informational by design.
 
 - Semantic truth ("the refactor is actually complete") is out of scope
   by design; that is what the single opt-in verify command is for.
-- The corpus is ours: 32 labelled scenarios built to cover every drift
+- The corpus is ours: 33 labelled scenarios built to cover every drift
   kind the README claims to catch. Kinds the tool does not claim (e.g.
   prose-handoff parsing) are tested as loud failures, not catches.
 - No comparison with any other tool is made or claimed. These are our
