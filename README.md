@@ -18,6 +18,12 @@ pip install git+https://github.com/RakTikoo/handoff-reconciler
 pipx install git+https://github.com/RakTikoo/handoff-reconciler
 ```
 
+With uv:
+
+```bash
+uv tool install git+https://github.com/RakTikoo/handoff-reconciler
+```
+
 That gives you the `handoff-reconciler` command. `python -m handoff_reconciler` does exactly the same thing, and running from a clone works too — no build step, it is pure stdlib Python (3.9+).
 
 In CI, use the GitHub Action instead of installing:
