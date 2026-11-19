@@ -21,6 +21,14 @@ drifted, and which next actions survive.
 
 ```bash
 pip install git+https://github.com/RakTikoo/handoff-reconciler
+# or, isolated, with pipx:
+pipx install git+https://github.com/RakTikoo/handoff-reconciler
+```
+
+With uv:
+
+```bash
+uv tool install git+https://github.com/RakTikoo/handoff-reconciler
 ```
 
 This provides the `handoff-reconciler` command (standard library only).
@@ -62,7 +70,9 @@ validation or tool error.
 The handoff's verify command is **never run by default** — it is
 untrusted data from the file, reported NOT-RUN. It runs only with the
 explicit `--run-verify` flag; use that only on handoffs you froze
-yourself or have read first.
+yourself or have read first. When it runs, it has a timeout:
+`--verify-timeout N` in seconds (default 120, must be 1..3600 —
+outside that range is a usage error, exit 2).
 
 ## Limits
 
