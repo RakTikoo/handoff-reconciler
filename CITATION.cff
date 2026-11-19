@@ -3,8 +3,8 @@ message: "If you use this software, please cite it as below."
 authors:
   - name: RakTikoo
 title: "handoff-reconciler: verify an AI session handoff against git before you trust it"
-version: 0.2
-date-released: 2026-11-14
+version: 0.2.1
+date-released: 2026-11-19
 license: MIT
 url: "https://github.com/RakTikoo/handoff-reconciler"
 repository-code: "https://github.com/RakTikoo/handoff-reconciler"

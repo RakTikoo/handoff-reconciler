@@ -20,6 +20,13 @@ pip install git+https://github.com/RakTikoo/handoff-reconciler
 pipx install git+https://github.com/RakTikoo/handoff-reconciler
 ```
 
+Or install the wheel straight from this repo's release assets (no package
+registry involved):
+
+```sh
+pip install https://github.com/RakTikoo/handoff-reconciler/releases/download/v0.2.1/handoff_reconciler-0.2.1-py3-none-any.whl
+```
+
 With uv:
 
 ```bash
@@ -31,7 +38,7 @@ That gives you the `handoff-reconciler` command. `python -m handoff_reconciler` 
 In CI, use the GitHub Action instead of installing:
 
 ```yaml
-- uses: RakTikoo/handoff-reconciler@v0.2
+- uses: RakTikoo/handoff-reconciler@v0.2.1
 ```
 
 (see the [GitHub Action](#github-action) section below for what it does).
@@ -185,7 +192,7 @@ Check-only drift report in CI (never `--run-verify`), written to the job summary
 ```yaml
 - uses: actions/checkout@v4
   with: { fetch-depth: 0 }
-- uses: RakTikoo/handoff-reconciler@v0.2
+- uses: RakTikoo/handoff-reconciler@v0.2.1
 ```
 
 **The job never fails.** The action is informational by design: it always exits 0, drift is reported in the job summary (with the checker's real exit code preserved there), and nothing is blocked. Gating a workflow on drift is a deliberate opt-in a team adds itself. The example workflow preserves the code through its `tee` pipeline with `pipefail` + `PIPESTATUS`, so the summary shows the true code rather than `tee`'s.

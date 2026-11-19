@@ -1,5 +1,8 @@
 name: "Handoff Reconciler — resume check"
-description: "Reconcile a frozen .handoff/HANDOFF.md against current git ground truth and write the drift report to the job summary. Check-only: never runs the handoff's verify command."
+description: "Verify a frozen AI session handoff (HANDOFF.md) against git ground truth and report the drift. Check-only."
+branding:
+  icon: "refresh-cw"
+  color: "purple"
 runs:
   using: "composite"
   steps:
