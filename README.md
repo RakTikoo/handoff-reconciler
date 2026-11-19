@@ -1,5 +1,7 @@
 # Handoff Reconciler — verify an AI session handoff against git before you trust it
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/RakTikoo/handoff-reconciler)
+
 [![Tests](https://github.com/RakTikoo/handoff-reconciler/actions/workflows/tests.yml/badge.svg)](https://github.com/RakTikoo/handoff-reconciler/actions/workflows/tests.yml)
 
 **One-sentence job:** freeze a structured, machine-checkable handoff at the end of an AI coding session, then — at the start of the next session — verify every claim in it against git/test ground truth and print a traffic-light drift report instead of trusting the summary.
@@ -35,6 +37,8 @@ In CI, use the GitHub Action instead of installing:
 (see the [GitHub Action](#github-action) section below for what it does).
 
 **CLI-first:** this is a command-line tool. There is no supported library API yet — the package layout is internal and may change between versions, so scripts and harnesses should call the CLI (or the Action), not import `handoff_reconciler.cli`.
+
+**For agent users:** this repository ships a `SKILL.md` for AI agents. Install it with `npx skills add RakTikoo/handoff-reconciler`.
 
 ## Use with an AI agent
 

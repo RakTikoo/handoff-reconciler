@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - name: RakTikoo
+title: "handoff-reconciler: verify an AI session handoff against git before you trust it"
+version: 0.2
+date-released: 2026-11-14
+license: MIT
+url: "https://github.com/RakTikoo/handoff-reconciler"
+repository-code: "https://github.com/RakTikoo/handoff-reconciler"
+abstract: >-
+  Freezes a structured, machine-checkable handoff at the end of an AI coding
+  session, then verifies every claim in it against git and test ground truth
+  at the start of the next session and prints a traffic-light drift report.
+  Deterministic; no LLM inside the tool.
+keywords:
+  - handoff
+  - AI agents
+  - git
+  - verification
+  - session
