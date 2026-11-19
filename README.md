@@ -1,4 +1,4 @@
-# Handoff Reconciler
+# Handoff Reconciler — verify an AI session handoff against git before you trust it
 
 [![Tests](https://github.com/RakTikoo/handoff-reconciler/actions/workflows/tests.yml/badge.svg)](https://github.com/RakTikoo/handoff-reconciler/actions/workflows/tests.yml)
 

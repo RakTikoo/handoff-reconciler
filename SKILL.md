@@ -1,6 +1,6 @@
 ---
 name: handoff-reconciler
-description: Freeze a structured, machine-checkable handoff at the end of an AI coding session, then verify it at the start of the next session instead of trusting the summary — HEAD moved, branch changed, files claimed finished but edited since, next-action targets deleted or changed, verify command status. Use when asked to hand off a session, freeze a handoff, resume from a previous agent's handoff, check what drifted between sessions, or verify a handoff file (.handoff/HANDOFF.md).
+description: Freeze a structured, machine-checkable handoff at the end of an AI coding session, then verify it at the start of the next session instead of trusting the summary — HEAD moved, branch changed, files claimed finished but edited since, next-action targets deleted or changed, verify command status. Use when asked to hand off a session, freeze a handoff, resume from a previous agent's handoff, check what drifted between sessions, or verify a handoff file (.handoff/HANDOFF.md). Not for general git status or diff inspection, for project management, or for scanning AI-agent skills (use skillscan).
 license: MIT
 compatibility: Requires Python 3.9+, pip, and git. Fully offline and deterministic; no LLM inside the tool.
 ---
