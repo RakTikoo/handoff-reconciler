@@ -30,6 +30,15 @@ In CI, use the GitHub Action instead of installing:
 
 **CLI-first:** this is a command-line tool. There is no supported library API yet — the package layout is internal and may change between versions, so scripts and harnesses should call the CLI (or the Action), not import `handoff_reconciler.cli`.
 
+## Use with an AI agent
+
+This repo ships a [SKILL.md](SKILL.md) written to the Agent Skills open
+standard. If your coding agent supports skills, point it at this repo and
+it can install Handoff Reconciler, freeze your session handoffs, and check
+them for drift when you resume. The skill works as promised when the repo
+is cloned under its real name (`handoff-reconciler`) — the standard ties
+the skill's name to its folder.
+
 ## See it work
 
 A real captured run (from `realworld/` in this repo — a handoff frozen
